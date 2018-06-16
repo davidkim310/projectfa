@@ -17,5 +17,9 @@ export class MapService {
     return this.http.get('../../../assets/neighbourhoods.geojson')
       .pipe(map(response => this.mapData = response));
   }
+  loadSfData() {
+    return this.http.get('../../../assets/sfairbnb.geojson')
+      .pipe(map(response => console.log(response)));
+  }
 }
 

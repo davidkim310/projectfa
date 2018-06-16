@@ -18,7 +18,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   lng = -118.2437;
   markers;
   activities;
-  zoomThreshold;
+  zoomThreshold = 16;
   constructor(private mapService: MapService) { }
 
   ngOnInit() {
@@ -55,16 +55,36 @@ export class MapComponent implements OnInit, AfterViewInit {
       trackResize: true,
       interactive: true
     });
-    this.map.addControl(new mapboxgl.GeolocateControl({
-      positionOptions: {
-          enableHighAccuracy: true
-      },
-      trackUserLocation: true
-  }));
+    this.addLayer();
     /// Add map controls
     this.map.addControl(new mapboxgl.NavigationControl());
-    // this.loadLocations();
-    this.addLayer();
+    this.map.addControl(new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true
+      },
+      trackUserLocation: true,
+      fitBoundsOptions: {
+        maxZoom: this.zoomThreshold
+      }
+    }));
+    this.map.on('zoom', function () {
+      console.log(this.getZoom(), this.zoomThreshold);
+      if (this.getZoom() > 16) {
+        this.removeLayer('points');
+        this.addLayer({
+          id: 'points',
+          source: 'pointsSource',
+          type: 'circle'
+        });
+      } else {
+        this.removeLayer('points');
+        this.addLayer({
+          id: 'points',
+          source: 'pointsSource',
+          type: 'heatmap'
+        })
+      }
+    });
   }
 
   addLayer() {
@@ -78,9 +98,17 @@ export class MapComponent implements OnInit, AfterViewInit {
         source: 'pointsSource',
         type: 'heatmap'
       });
+      // this.map.addLayer({
+      //   id: 'points',
+      //   source: 'pointsSource',
+      //   minZoom: 16,
+      //   layout: {
+      //     'icon-image': '{icon}-15',
+      //     'icon-allow-overlap': true
+      //   }
+      // });
     });
   }
-
 }
 
 
