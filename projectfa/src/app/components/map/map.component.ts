@@ -18,6 +18,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   lng = -118.2437;
   markers;
   activities;
+  zoomThreshold;
   constructor(private mapService: MapService) { }
 
   ngOnInit() {
